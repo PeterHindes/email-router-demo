@@ -92,20 +92,20 @@ export default {
 	async email(message, env, ctx) {
 		console.log(message.from);
 
-		var route = routes[`${message.headers.get('subject').toLowerCase()} ${ctx.request.url}`];
+		var route = routes[`${message.headers.get('subject').toLowerCase()}`];
 		if (!route) {
 			console.log("no route");
 			route = routes["default"];
 		}
 		var responded = false;
 		if (route.senderValidation.test(message.from)) {
-			responded = route(message, env, ctx);
+			responded = route["res"](message, env, ctx);
 		} else {
 			console.log("invalid sender");
 			route = routes["invalid sender"];
-			responded = route(message, env, ctx);
+			responded = route["res"](message, env, ctx);
 		}
-		if (responded) {
+		if (await responded) {
 			console.log("Response sent");
 			return;
 		} else {
